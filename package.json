@@ -13,7 +13,6 @@
   "author": "augustustung",
   "license": "ISC",
   "dependencies": {
-    "@chainlink/contracts": "^0.4.1",
     "@openzeppelin/contracts": "^4.6.0",
     "@truffle/hdwallet-provider": "^2.0.14",
     "chai": "^4.3.6",

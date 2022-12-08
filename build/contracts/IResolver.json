@@ -39,7 +39,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"}],\"name\":\"getPaymentToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"_v\",\"type\":\"address\"}],\"name\":\"setPaymentToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Interface/IResolver.sol\":\"IResolver\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Interface/IResolver.sol\":{\"keccak256\":\"0x7482a384a152b5699e6a008615e3ca585a7f39002d40b9d85674edeb18ab9e6e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://aa6f66d24a9c58ed878d4c9f3c3bd1468c5fa88caded41772e49f4aa680e0a1a\",\"dweb:/ipfs/QmWTqS5hgNtJh2JGisprD8FEiWZZbKrpBJLzdGb5oz5p1e\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"}],\"name\":\"getPaymentToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"_v\",\"type\":\"address\"}],\"name\":\"setPaymentToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Interface/IResolver.sol\":\"IResolver\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":400},\"remappings\":[]},\"sources\":{\"project:/contracts/Interface/IResolver.sol\":{\"keccak256\":\"0x7482a384a152b5699e6a008615e3ca585a7f39002d40b9d85674edeb18ab9e6e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://aa6f66d24a9c58ed878d4c9f3c3bd1468c5fa88caded41772e49f4aa680e0a1a\",\"dweb:/ipfs/QmWTqS5hgNtJh2JGisprD8FEiWZZbKrpBJLzdGb5oz5p1e\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -284,7 +284,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.11",
-  "updatedAt": "2022-12-08T12:05:25.880Z",
+  "updatedAt": "2022-12-08T13:34:08.608Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},
