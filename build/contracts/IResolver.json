@@ -1,0 +1,298 @@
+{
+  "contractName": "IResolver",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "_pt",
+          "type": "uint8"
+        }
+      ],
+      "name": "getPaymentToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "_pt",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "_v",
+          "type": "address"
+        }
+      ],
+      "name": "setPaymentToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"}],\"name\":\"getPaymentToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_pt\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"_v\",\"type\":\"address\"}],\"name\":\"setPaymentToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Interface/IResolver.sol\":\"IResolver\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Interface/IResolver.sol\":{\"keccak256\":\"0x7482a384a152b5699e6a008615e3ca585a7f39002d40b9d85674edeb18ab9e6e\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://aa6f66d24a9c58ed878d4c9f3c3bd1468c5fa88caded41772e49f4aa680e0a1a\",\"dweb:/ipfs/QmWTqS5hgNtJh2JGisprD8FEiWZZbKrpBJLzdGb5oz5p1e\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.11;\r\n\r\ninterface IResolver {\r\n    enum PaymentToken {\r\n        MyToken\r\n        // SENTINEL,\r\n        // WETH,\r\n        // DAI,\r\n        // USDC,\r\n        // USDT,\r\n        // TUSD,\r\n        // RENT\r\n    }\r\n\r\n    function getPaymentToken(uint8 _pt) external view returns (address);\r\n\r\n    function setPaymentToken(uint8 _pt, address _v) external;\r\n}\r\n",
+  "sourcePath": "C:\\Github\\rent-NFT\\contracts\\Interface\\IResolver.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/Interface/IResolver.sol",
+    "exportedSymbols": {
+      "IResolver": [
+        2935
+      ]
+    },
+    "id": 2936,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2918,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "33:24:19"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IResolver",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 2935,
+        "linearizedBaseContracts": [
+          2935
+        ],
+        "name": "IResolver",
+        "nameLocation": "71:9:19",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "IResolver.PaymentToken",
+            "id": 2920,
+            "members": [
+              {
+                "id": 2919,
+                "name": "MyToken",
+                "nameLocation": "117:7:19",
+                "nodeType": "EnumValue",
+                "src": "117:7:19"
+              }
+            ],
+            "name": "PaymentToken",
+            "nameLocation": "93:12:19",
+            "nodeType": "EnumDefinition",
+            "src": "88:171:19"
+          },
+          {
+            "functionSelector": "c6ee427f",
+            "id": 2927,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getPaymentToken",
+            "nameLocation": "276:15:19",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2923,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2922,
+                  "mutability": "mutable",
+                  "name": "_pt",
+                  "nameLocation": "298:3:19",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2927,
+                  "src": "292:9:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 2921,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "292:5:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "291:11:19"
+            },
+            "returnParameters": {
+              "id": 2926,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2925,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2927,
+                  "src": "326:7:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2924,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "326:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "325:9:19"
+            },
+            "scope": 2935,
+            "src": "267:68:19",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "functionSelector": "321c6aea",
+            "id": 2934,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setPaymentToken",
+            "nameLocation": "352:15:19",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2932,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2929,
+                  "mutability": "mutable",
+                  "name": "_pt",
+                  "nameLocation": "374:3:19",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2934,
+                  "src": "368:9:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 2928,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "368:5:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2931,
+                  "mutability": "mutable",
+                  "name": "_v",
+                  "nameLocation": "387:2:19",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2934,
+                  "src": "379:10:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2930,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "379:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "367:23:19"
+            },
+            "returnParameters": {
+              "id": 2933,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "399:0:19"
+            },
+            "scope": 2935,
+            "src": "343:57:19",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 2936,
+        "src": "61:342:19",
+        "usedErrors": []
+      }
+    ],
+    "src": "33:372:19"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.11+commit.d7f03943.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.11",
+  "updatedAt": "2022-12-08T12:05:25.880Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
