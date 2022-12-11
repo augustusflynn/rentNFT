@@ -530,19 +530,20 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         bytes4[] memory _nftPrices,
         IResolver.PaymentToken[] memory _paymentTokens
     ) private pure returns (CallData memory cd) {
-        cd = CallData({
-            left: 0,
-            right: 1,
-            nfts: _nfts,
-            tokenIds: _tokenIds,
-            lentAmounts: _lendAmounts,
-            lendingIds: new uint256[](0),
-            rentDurations: new uint8[](0),
-            maxRentDurations: _maxRentDurations,
-            dailyRentPrices: _dailyRentPrices,
-            nftPrices: _nftPrices,
-            paymentTokens: _paymentTokens
-        });
+        return
+            CallData({
+                left: 0,
+                right: 1,
+                nfts: _nfts,
+                tokenIds: _tokenIds,
+                lentAmounts: _lendAmounts,
+                lendingIds: new uint256[](0),
+                rentDurations: new uint8[](0),
+                maxRentDurations: _maxRentDurations,
+                dailyRentPrices: _dailyRentPrices,
+                nftPrices: _nftPrices,
+                paymentTokens: _paymentTokens
+            });
     }
 
     function createRentCallData(
@@ -551,19 +552,20 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         uint256[] memory _lendingIds,
         uint8[] memory _rentDurations
     ) private pure returns (CallData memory cd) {
-        cd = CallData({
-            left: 0,
-            right: 1,
-            nfts: _nfts,
-            tokenIds: _tokenIds,
-            lentAmounts: new uint256[](0),
-            lendingIds: _lendingIds,
-            rentDurations: _rentDurations,
-            maxRentDurations: new uint8[](0),
-            dailyRentPrices: new bytes4[](0),
-            nftPrices: new bytes4[](0),
-            paymentTokens: new IResolver.PaymentToken[](0)
-        });
+        return
+            CallData({
+                left: 0,
+                right: 1,
+                nfts: _nfts,
+                tokenIds: _tokenIds,
+                lentAmounts: new uint256[](0),
+                lendingIds: _lendingIds,
+                rentDurations: _rentDurations,
+                maxRentDurations: new uint8[](0),
+                dailyRentPrices: new bytes4[](0),
+                nftPrices: new bytes4[](0),
+                paymentTokens: new IResolver.PaymentToken[](0)
+            });
     }
 
     function createActionCallData(
@@ -571,19 +573,20 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         uint256[] memory _tokenIds,
         uint256[] memory _lendingIds
     ) private pure returns (CallData memory cd) {
-        cd = CallData({
-            left: 0,
-            right: 1,
-            nfts: _nfts,
-            tokenIds: _tokenIds,
-            lentAmounts: new uint256[](0),
-            lendingIds: _lendingIds,
-            rentDurations: new uint8[](0),
-            maxRentDurations: new uint8[](0),
-            dailyRentPrices: new bytes4[](0),
-            nftPrices: new bytes4[](0),
-            paymentTokens: new IResolver.PaymentToken[](0)
-        });
+        return
+            CallData({
+                left: 0,
+                right: 1,
+                nfts: _nfts,
+                tokenIds: _tokenIds,
+                lentAmounts: new uint256[](0),
+                lendingIds: _lendingIds,
+                rentDurations: new uint8[](0),
+                maxRentDurations: new uint8[](0),
+                dailyRentPrices: new bytes4[](0),
+                nftPrices: new bytes4[](0),
+                paymentTokens: new IResolver.PaymentToken[](0)
+            });
     }
 
     function unpackPrice(bytes4 _price, uint256 _scale)

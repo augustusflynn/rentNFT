@@ -6,7 +6,7 @@ module.exports = {
   plugins: [
     "truffle-contract-size",
     "truffle-plugin-solhint",
-    "truffle-plugin-verify",
+    "truffle-plugin-verify"
   ],
   api_keys: {
     bscscan: "K1IYARAMWUJKF3CCD4EZXEBX58VVCTT62D",
