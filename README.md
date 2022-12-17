@@ -1,20 +1,23 @@
 
+<div id="top"></div>
+
 ## Table of content
 
-- [🖼️ What is ReNFT](#🖼️-what-is-renft)
-  - [🖼️🌊 Flow](#🖼️🌊-flow)
-- [🤏🏻 ReNft contract spec](#🤏🏻-renft-contract-spec)
-  - [🤏🏻👨🏻‍💻 Events](#🤏🏻👨🏻‍💻-events)
-  - [🤏🏻👩🏽‍✈️ Functions](#🤏🏻👩🏽‍✈️-functions)
-  - [🤏🏻👩🏽‍✈️ Usage](#🤏🏻👩🏽‍✈️-usage)
+- [What is ReNFT](#what-is-renft)
+  - [Flow](#flow)
+- [ReNft contract spec](#renft-contract-spec)
+  - [Events](#events)
+  - [Functions](#functions)
+  - [Usage](#usage)
+  - [Testing](#testing)
 
-## 🖼️ What is ReNFT
+## What is ReNFT
 
 ReNFT is an Ethereum protocol for ERC-721 and ERC-1155 lending and renting. The protocol is incredibly minimalistic.
-The core contract is implemented in `src/ReNFT.sol`, you can find the interface in `src/Interface/IReNFT.sol`.
+The core contract is implemented in `contracts/ReNFT.sol`, you can find the interface in `contracts/Interface/IReNFT.sol`.
 
 
-### 🖼️🌊 Flow
+### Flow
 
 1. Lender specifies a number of parameters
 
@@ -48,9 +51,9 @@ The core contract is implemented in `src/ReNFT.sol`, you can find the interface 
 
    5b. Collateral along with full rent payment gets sent to the lender
 
-## 🤏🏻 **ReNFT contract spec**
+## **ReNFT contract spec**
 
-### 🤏🏻👨🏻‍💻 **_Events_**
+### 👨🏻‍💻 **_Events_**
 
 `Lent` - when an NFT(s) is/are lent.
 
@@ -62,7 +65,7 @@ The core contract is implemented in `src/ReNFT.sol`, you can find the interface 
 
 `LendingStopped` - lender can stop lending their NFT(s), these will be sent from the ReNFT contract back to the lender.
 
-### 🤏🏻👩🏽‍✈️ **_Functions_**
+### **_Functions_**
 
 `lend` - lend some/all of your NFTs. These get sent to ReNFT contract for escrow, until the renter is found.
 
@@ -74,7 +77,7 @@ The core contract is implemented in `src/ReNFT.sol`, you can find the interface 
 
 `stopLending` - called by lender to release their lent NFT back to them. This marks end of the interaction with ReNFT smart contract.
 
-### 🤏🏻👩🏽‍✈️ **_Usage_**
+### **_Usage_**
 
 The below is a simple example of lending an ERC721, note that the amount is ignored, you will always lend 1 unit of ERC721 token.
 
@@ -119,3 +122,26 @@ main()
 ```
 
 For more usage examples, see `test/unit/reNFT.js`
+
+
+### **_Testing_**
+- Step 2: Clone this project using git CLI
+```sh
+git clone https://github.com/augustustung/rentNFT.git
+```
+
+- Step 2: Installing package
+```sh
+$ yarn install
+```
+or
+```sh
+$ npm install
+```
+
+Step 3: Edit uint test in file `test/unit/reNFT.js` 
+```
+$ ./node_modules/.bin/truffle develop
+$ truffle test
+```
+
