@@ -53,7 +53,7 @@ The core contract is implemented in `contracts/ReNFT.sol`, you can find the inte
 
 ## **ReNFT contract spec**
 
-### 👨🏻‍💻 **_Events_**
+### **_Events_**
 
 `Lent` - when an NFT(s) is/are lent.
 
@@ -125,7 +125,7 @@ For more usage examples, see `test/unit/reNFT.js`
 
 
 ### **_Testing_**
-- Step 2: Clone this project using git CLI
+- Step 1: Clone this project using git CLI
 ```sh
 git clone https://github.com/augustustung/rentNFT.git
 ```
