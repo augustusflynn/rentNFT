@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -14,7 +13,6 @@ import "./Interface/IResolver.sol";
 import "./Interface/IReNFT.sol";
 
 contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
-    using SafeERC20 for ERC20;
     using Strings for uint256;
 
     IResolver private resolver;
@@ -130,17 +128,17 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         );
     }
 
-    // function rent(
-    //     address[] memory _nfts,
-    //     uint256[] memory _tokenIds,
-    //     uint256[] memory _lendingIds,
-    //     uint8[] memory _rentDurations
-    // ) external override notPaused {
-    //     bundleCall(
-    //         handleRent,
-    //         createRentCallData(_nfts, _tokenIds, _lendingIds, _rentDurations)
-    //     );
-    // }
+    function rent(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId,
+        uint8 _rentDuration
+    ) external override notPaused {
+        bundleCall(
+            handleRent,
+            createRentCallData(_nft, _tokenId, _lendingId, _rentDuration)
+        );
+    }
 
     // function returnIt(
     //     address[] memory _nfts,
@@ -335,68 +333,62 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         );
     }
 
-    // function handleRent(CallData memory _cd) private {
-    //     uint256[] memory lentAmounts = new uint256[](_cd.right - _cd.left);
+    function handleRent(CallData memory _cd) private {
+        LendingRenting storage item = lendingRenting[
+            keccak256(
+                abi.encodePacked(
+                    _cd.nft,
+                    _cd.tokenId.toString(),
+                    _cd.lendingId.toString()
+                )
+            )
+        ];
 
-    //     for (uint256 i = _cd.left; i < _cd.right; i++) {
-    //         LendingRenting storage item = lendingRenting[
-    //             keccak256(
-    //                 abi.encodePacked(
-    //                     _cd.nfts[_cd.left],
-    //                     _cd.tokenIds[i],
-    //                     _cd.lendingIds[i]
-    //                 )
-    //             )
-    //         ];
+        ensureIsNotNull(item.lending);
+        ensureIsNull(item.renting);
+        ensureIsRentable(item.lending, _cd, msg.sender);
 
-    //         ensureIsNotNull(item.lending);
-    //         ensureIsNull(item.renting);
-    //         ensureIsRentable(item.lending, _cd, i, msg.sender);
+        address paymentToken = resolver.getPaymentToken(
+            item.lending.paymentToken
+        );
+        ensureIsNotZeroAddr(paymentToken);
+        uint256 decimals = ERC20(paymentToken).decimals();
 
-    //         uint8 paymentTokenIx = uint8(item.lending.paymentToken);
-    //         ensureTokenNotSentinel(paymentTokenIx);
-    //         address paymentToken = resolver.getPaymentToken(paymentTokenIx);
-    //         uint256 decimals = ERC20(paymentToken).decimals();
+        {
+            uint256 scale = 10**decimals;
+            uint256 rentPrice = _cd.rentDuration *
+                unpackPrice(item.lending.dailyRentPrice, scale);
+            uint256 nftPrice = item.lending.lentAmount *
+                unpackPrice(item.lending.nftPrice, scale);
 
-    //         {
-    //             uint256 scale = 10**decimals;
-    //             uint256 rentPrice = _cd.rentDurations[i] *
-    //                 unpackPrice(item.lending.dailyRentPrice, scale);
-    //             uint256 nftPrice = item.lending.lentAmount *
-    //                 unpackPrice(item.lending.nftPrice, scale);
+            require(rentPrice > 0, "ReNFT::rent price is zero");
+            require(nftPrice > 0, "ReNFT::nft price is zero");
+            ERC20(paymentToken).transferFrom(
+                msg.sender,
+                address(this),
+                rentPrice + nftPrice
+            );
+        }
 
-    //             require(rentPrice > 0, "ReNFT::rent price is zero");
-    //             require(nftPrice > 0, "ReNFT::nft price is zero");
+        item.renting.renterAddress = payable(msg.sender);
+        item.renting.rentDuration = _cd.rentDuration;
+        item.renting.rentedAt = uint32(block.timestamp);
 
-    //             ERC20(paymentToken).safeTransferFrom(
-    //                 msg.sender,
-    //                 address(this),
-    //                 rentPrice + nftPrice
-    //             );
-    //         }
+        emit Rented(
+            _cd.lendingId,
+            msg.sender,
+            _cd.rentDuration,
+            item.renting.rentedAt
+        );
 
-    //         lentAmounts[i - _cd.left] = item.lending.lentAmount;
-
-    //         item.renting.renterAddress = payable(msg.sender);
-    //         item.renting.rentDuration = _cd.rentDurations[i];
-    //         item.renting.rentedAt = uint32(block.timestamp);
-
-    //         emit Rented(
-    //             _cd.lendingIds[i],
-    //             msg.sender,
-    //             _cd.rentDurations[i],
-    //             item.renting.rentedAt
-    //         );
-    //     }
-
-    //     safeTransfer(
-    //         _cd,
-    //         address(this),
-    //         msg.sender,
-    //         sliceArr(_cd.tokenIds, _cd.left, _cd.right, 0),
-    //         sliceArr(lentAmounts, _cd.left, _cd.right, _cd.left)
-    //     );
-    // }
+        safeTransfer(
+            _cd,
+            address(this),
+            msg.sender,
+            _cd.tokenId,
+            _cd.lentAmount
+        );
+    }
 
     // function handleReturn(CallData memory _cd) private {
     //     uint256[] memory lentAmounts = new uint256[](_cd.right - _cd.left);
@@ -531,27 +523,25 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
             });
     }
 
-    // function createRentCallData(
-    //     address[] memory _nfts,
-    //     uint256[] memory _tokenIds,
-    //     uint256[] memory _lendingIds,
-    //     uint8[] memory _rentDurations
-    // ) private pure returns (CallData memory cd) {
-    //     return
-    //         CallData({
-    //             left: 0,
-    //             right: 1,
-    //             nfts: _nfts,
-    //             tokenIds: _tokenIds,
-    //             lentAmounts: new uint256[](0),
-    //             lendingIds: _lendingIds,
-    //             rentDurations: _rentDurations,
-    //             maxRentDurations: new uint8[](0),
-    //             dailyRentPrices: new bytes4[](0),
-    //             nftPrices: new bytes4[](0),
-    //             paymentTokens: new IResolver.PaymentToken[](0)
-    //         });
-    // }
+    function createRentCallData(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId,
+        uint8 _rentDuration
+    ) private pure returns (CallData memory cd) {
+        return
+            CallData({
+                nft: _nft,
+                tokenId: _tokenId,
+                lentAmount: 0,
+                lendingId: _lendingId,
+                rentDuration: _rentDuration,
+                maxRentDuration: 0,
+                dailyRentPrice: 0,
+                nftPrice: 0,
+                paymentToken: ""
+            });
+    }
 
     // function createActionCallData(
     //     address[] memory _nfts,
@@ -574,42 +564,42 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
     //         });
     // }
 
-    // function unpackPrice(bytes4 _price, uint256 _scale)
-    //     private
-    //     pure
-    //     returns (uint256)
-    // {
-    //     ensureIsUnpackablePrice(_price, _scale);
+    function unpackPrice(bytes4 _price, uint256 _scale)
+        private
+        pure
+        returns (uint256)
+    {
+        ensureIsUnpackablePrice(_price, _scale);
 
-    //     uint16 whole = uint16(bytes2(_price));
-    //     uint16 decimal = uint16(bytes2(_price << 16));
-    //     uint256 decimalScale = _scale / 10000;
+        uint16 whole = uint16(bytes2(_price));
+        uint16 decimal = uint16(bytes2(_price << 16));
+        uint256 decimalScale = _scale / 10000;
 
-    //     if (whole > 9999) {
-    //         whole = 9999;
-    //     }
-    //     if (decimal > 9999) {
-    //         decimal = 9999;
-    //     }
+        if (whole > 9999) {
+            whole = 9999;
+        }
+        if (decimal > 9999) {
+            decimal = 9999;
+        }
 
-    //     uint256 w = whole * _scale;
-    //     uint256 d = decimal * decimalScale;
-    //     uint256 price = w + d;
+        uint256 w = whole * _scale;
+        uint256 d = decimal * decimalScale;
+        uint256 price = w + d;
 
-    //     return price;
-    // }
+        return price;
+    }
 
-    // function sliceArr(
-    //     uint256[] memory _arr,
-    //     uint256 _fromIx,
-    //     uint256 _toIx,
-    //     uint256 _arrOffset
-    // ) private pure returns (uint256[] memory r) {
-    //     r = new uint256[](_toIx - _fromIx);
-    //     for (uint256 i = _fromIx; i < _toIx; i++) {
-    //         r[i - _fromIx] = _arr[i - _arrOffset];
-    //     }
-    // }
+    function sliceArr(
+        uint256[] memory _arr,
+        uint256 _fromIx,
+        uint256 _toIx,
+        uint256 _arrOffset
+    ) private pure returns (uint256[] memory r) {
+        r = new uint256[](_toIx - _fromIx);
+        for (uint256 i = _fromIx; i < _toIx; i++) {
+            r[i - _fromIx] = _arr[i - _arrOffset];
+        }
+    }
 
     //      .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.
     // `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'
@@ -657,73 +647,73 @@ contract ReNFT is IReNft, ERC721Holder, ERC1155Receiver, ERC1155Holder {
         require(uint32(_cd.nftPrice) > 0, "ReNFT::nft price is zero");
     }
 
-    // function ensureIsRentable(
-    //     Lending memory _lending,
-    //     CallData memory _cd,
-    //     address _msgSender
-    // ) private pure {
-    //     require(
-    //         _msgSender != _lending.lenderAddress,
-    //         "ReNFT::cant rent own nft"
-    //     );
-    //     require(_cd.rentDuration <= type(uint8).max, "ReNFT::not uint8");
-    //     require(_cd.rentDuration > 0, "ReNFT::duration is zero");
-    //     require(
-    //         _cd.rentDuration <= _lending.maxRentDuration,
-    //         "ReNFT::rent duration exceeds allowed max"
-    //     );
-    // }
+    function ensureIsRentable(
+        Lending memory _lending,
+        CallData memory _cd,
+        address _msgSender
+    ) private pure {
+        require(
+            _msgSender != _lending.lenderAddress,
+            "ReNFT::cant rent own nft"
+        );
+        require(_cd.rentDuration <= type(uint8).max, "ReNFT::not uint8");
+        require(_cd.rentDuration > 0, "ReNFT::duration is zero");
+        require(
+            _cd.rentDuration <= _lending.maxRentDuration,
+            "ReNFT::rent duration exceeds allowed max"
+        );
+    }
 
-    // function ensureIsReturnable(
-    //     Renting memory _renting,
-    //     address _msgSender,
-    //     uint256 _blockTimestamp
-    // ) private pure {
-    //     require(_renting.renterAddress == _msgSender, "ReNFT::not renter");
-    //     require(
-    //         !isPastReturnDate(_renting, _blockTimestamp),
-    //         "ReNFT::past return date"
-    //     );
-    // }
+    function ensureIsReturnable(
+        Renting memory _renting,
+        address _msgSender,
+        uint256 _blockTimestamp
+    ) private pure {
+        require(_renting.renterAddress == _msgSender, "ReNFT::not renter");
+        require(
+            !isPastReturnDate(_renting, _blockTimestamp),
+            "ReNFT::past return date"
+        );
+    }
 
-    // function ensureIsStoppable(Lending memory _lending, address _msgSender)
-    //     private
-    //     pure
-    // {
-    //     require(_lending.lenderAddress == _msgSender, "ReNFT::not lender");
-    // }
+    function ensureIsStoppable(Lending memory _lending, address _msgSender)
+        private
+        pure
+    {
+        require(_lending.lenderAddress == _msgSender, "ReNFT::not lender");
+    }
 
-    // function ensureIsClaimable(Renting memory _renting, uint256 _blockTimestamp)
-    //     private
-    //     pure
-    // {
-    //     require(
-    //         isPastReturnDate(_renting, _blockTimestamp),
-    //         "ReNFT::return date not passed"
-    //     );
-    // }
+    function ensureIsClaimable(Renting memory _renting, uint256 _blockTimestamp)
+        private
+        pure
+    {
+        require(
+            isPastReturnDate(_renting, _blockTimestamp),
+            "ReNFT::return date not passed"
+        );
+    }
 
-    // function ensureIsUnpackablePrice(bytes4 _price, uint256 _scale)
-    //     private
-    //     pure
-    // {
-    //     require(uint32(_price) > 0, "ReNFT::invalid price");
-    //     require(_scale >= 10000, "ReNFT::invalid scale");
-    // }
+    function ensureIsUnpackablePrice(bytes4 _price, uint256 _scale)
+        private
+        pure
+    {
+        require(uint32(_price) > 0, "ReNFT::invalid price");
+        require(_scale >= 10000, "ReNFT::invalid scale");
+    }
 
-    // function ensureTokenNotSentinel(uint8 _paymentIx) private pure {
-    //     require(_paymentIx > 0, "ReNFT::token is sentinel");
-    // }
+    function ensureTokenNotSentinel(uint8 _paymentIx) private pure {
+        require(_paymentIx > 0, "ReNFT::token is sentinel");
+    }
 
-    // function isPastReturnDate(Renting memory _renting, uint256 _now)
-    //     private
-    //     pure
-    //     returns (bool)
-    // {
-    //     require(_now > _renting.rentedAt, "ReNFT::now before rented");
-    //     return
-    //         _now - _renting.rentedAt > _renting.rentDuration * SECONDS_IN_DAY;
-    // }
+    function isPastReturnDate(Renting memory _renting, uint256 _now)
+        private
+        pure
+        returns (bool)
+    {
+        require(_now > _renting.rentedAt, "ReNFT::now before rented");
+        return
+            _now - _renting.rentedAt > _renting.rentDuration * SECONDS_IN_DAY;
+    }
 
     //      .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.     .-.
     // `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._.'

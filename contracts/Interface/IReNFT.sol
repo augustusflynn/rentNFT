@@ -22,18 +22,18 @@ interface IReNft is IERC721Receiver, IERC1155Receiver {
         string paymentToken
     );
 
-    // event Rented(
-    //     uint256 lendingId,
-    //     address indexed renterAddress,
-    //     uint8 rentDuration,
-    //     uint32 rentedAt
-    // );
+    event Rented(
+        uint256 lendingId,
+        address indexed renterAddress,
+        uint8 rentDuration,
+        uint32 rentedAt
+    );
 
-    // event Returned(uint256 indexed lendingId, uint32 returnedAt);
+    event Returned(uint256 indexed lendingId, uint32 returnedAt);
 
-    // event CollateralClaimed(uint256 indexed lendingId, uint32 claimedAt);
+    event CollateralClaimed(uint256 indexed lendingId, uint32 claimedAt);
 
-    // event LendingStopped(uint256 indexed lendingId, uint32 stoppedAt);
+    event LendingStopped(uint256 indexed lendingId, uint32 stoppedAt);
 
     /**
      * @dev sends your NFT to ReNFT contract, which acts as an escrow
@@ -49,17 +49,17 @@ interface IReNft is IERC721Receiver, IERC1155Receiver {
         string memory _paymentToken
     ) external;
 
-    // /**
-    //  * @dev renter sends rentDuration * dailyRentPrice
-    //  * to cover for the potentially full cost of renting. They also
-    //  * must send the collateral (nft price set by the lender in lend)
-    //  */
-    // function rent(
-    //     address[] memory _nft,
-    //     uint256[] memory _tokenId,
-    //     uint256[] memory _lendingIds,
-    //     uint8[] memory _rentDurations
-    // ) external;
+    /**
+     * @dev renter sends rentDuration * dailyRentPrice
+     * to cover for the potentially full cost of renting. They also
+     * must send the collateral (nft price set by the lender in lend)
+     */
+    function rent(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId,
+        uint8 _rentDuration
+    ) external;
 
     // /**
     //  * @dev renters call this to return the rented NFT before the

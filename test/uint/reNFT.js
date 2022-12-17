@@ -27,7 +27,7 @@ const {
  * [x] Lending NFT
  * 
  * CASE 1
- * [] user B: Renting NFT
+ * [x] user B: Renting NFT
  * [] user A: Claiming collateral
  * [] user A: Cannot take NFT back
  * 
@@ -53,13 +53,11 @@ const {
  */
 
 contract("ReNFT", function (accounts) {
-  /////// userA
-  const userA = accounts[9];
   const resolverWallet = accounts[9];
   const beneficiaryWallet = accounts[9];
   const reNFTHolderWallet = accounts[9];
-  ///////
-  const userB = accounts[0];
+  const userA = accounts[0];
+  const userB = accounts[1];
 
   const utils = web3.utils;
 
@@ -68,13 +66,12 @@ contract("ReNFT", function (accounts) {
   const DAILY_RENT_PRICE = packPrice(2);
   const NFT_PRICE = packPrice(3);
   const PAYMENT_TOKEN_MTK = "MTK"; // default token is MTK
-
   const SECONDS_IN_A_DAY = 86400;
-  const ERC20_SEND_AMT = utils.toWei("100000000", "ether");
-
+  const MINT_AMOUNT = 100000000;
+  const MINT_AMOUNT_WEI = utils.toWei(MINT_AMOUNT.toString(), "ether");
 
   let TokenInstance, NFTInstance, ResolverInstance, ReNFTInstance;
-  let lastestNFT;
+  let lastestNFT, lastestLendingId;
 
   before("should set up before test", async () => {
     TokenInstance = await Token.deployed();
@@ -87,7 +84,7 @@ contract("ReNFT", function (accounts) {
 
     // mint MTK
     await TokenInstance.mint(
-      10000000,
+      MINT_AMOUNT,
       {
         from: userB
       });
@@ -125,6 +122,7 @@ contract("ReNFT", function (accounts) {
       nftPrice: nftPrice,
       paymentToken: paymentToken
     });
+    lastestLendingId = parseInt(txn.logs[0].args.lendingId.toString());
   };
 
   beforeEach(async () => {
@@ -132,8 +130,8 @@ contract("ReNFT", function (accounts) {
     await NFTInstance.mint(1, {
       from: userA
     });
-    let lastestNFTID = await NFTInstance.tokenCounter();
-    lastestNFT = parseInt(lastestNFTID.toString()) - 1;
+    let _lastestNFT = await NFTInstance.tokenCounter();
+    lastestNFT = parseInt(_lastestNFT.toString()) - 1;
     await NFTInstance.approve(
       ReNFTInstance.address,
       lastestNFT,
@@ -141,11 +139,49 @@ contract("ReNFT", function (accounts) {
         from: userA
       }
     );
-  });
-
-  it("Lending - Renting", async () => {
     await lend({
       tokenId: lastestNFT
+    });
+  });
+
+  // it("Lending", async () => {
+  //   await lend({
+  //     tokenId: lastestNFT
+  //   });
+  // })
+
+  it("Renting NFT", async () => {
+    const rentFee = new BN(MAX_RENT_DURATION).mul(utils.toWei(new BN(2), "ether"));
+    const LENT_AMOUNT = 1;
+    const nftFee = new BN(LENT_AMOUNT).mul(utils.toWei(new BN(3), "ether"));
+    const totalFee = rentFee.add(nftFee);
+
+    let approveTx = await TokenInstance.approve(
+      ReNFTInstance.address,
+      totalFee,
+      {
+        from: userB
+      }
+    );
+    expectEvent(approveTx, "Approval", {
+      owner: userB,
+      spender: ReNFTInstance.address,
+      value: totalFee
+    });
+
+    let rentTx = await ReNFTInstance.rent(
+      NFTInstance.address,
+      lastestNFT,
+      lastestLendingId,
+      MAX_RENT_DURATION,
+      {
+        from: userB
+      }
+    );
+    expectEvent(rentTx, "Rented", {
+      lendingId: new BN(lastestLendingId),
+      renterAddress: userB,
+      rentDuration: new BN(MAX_RENT_DURATION),
     });
   });
 });
