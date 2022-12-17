@@ -67,7 +67,7 @@ contract("ReNFT", function (accounts) {
   const MAX_RENT_DURATION = 1; // 1 day
   const DAILY_RENT_PRICE = packPrice(2);
   const NFT_PRICE = packPrice(3);
-  const PAYMENT_TOKEN_MTK = 1; // default token is MTK
+  const PAYMENT_TOKEN_MTK = "MTK"; // default token is MTK
 
   const SECONDS_IN_A_DAY = 86400;
   const ERC20_SEND_AMT = utils.toWei("100000000", "ether");
@@ -85,16 +85,7 @@ contract("ReNFT", function (accounts) {
     // Advance to the next block to correctly read time in the solidity "now" function interpreted by ganache
     await time.advanceBlock();
 
-    // set Token address for Resolver
-    await ResolverInstance.setPaymentToken(
-      PAYMENT_TOKEN_MTK,
-      TokenInstance.address,
-      {
-        from: userA
-      }
-    );
-
-    // mint Token
+    // mint MTK
     await TokenInstance.mint(
       10000000,
       {
@@ -102,31 +93,38 @@ contract("ReNFT", function (accounts) {
       });
   });
 
-  const lendBatch = async ({
-    tokenIds,
-    nftAddresses = Array(tokenIds.length).fill(NFTInstance.address),
-    amounts = Array(tokenIds.length).fill(1),
-    maxRentDurations = Array(tokenIds.length).fill(MAX_RENT_DURATION),
-    dailyRentPrices = Array(tokenIds.length).fill(DAILY_RENT_PRICE),
-    nftPrices = Array(tokenIds.length).fill(NFT_PRICE),
-    paymentTokens = Array(tokenIds.length).fill(PAYMENT_TOKEN_MTK)
+  const lend = async ({
+    tokenId,
+    nftAddress = NFTInstance.address,
+    amount = 1,
+    maxRentDuration = MAX_RENT_DURATION,
+    dailyRentPrice = DAILY_RENT_PRICE,
+    nftPrice = NFT_PRICE,
+    paymentToken = PAYMENT_TOKEN_MTK
   }) => {
     const txn = await ReNFTInstance.lend(
-      nftAddresses,
-      tokenIds,
-      amounts,
-      maxRentDurations,
-      dailyRentPrices,
-      nftPrices,
-      paymentTokens,
+      nftAddress,
+      tokenId,
+      amount,
+      maxRentDuration,
+      dailyRentPrice,
+      nftPrice,
+      paymentToken,
       {
         from: userA
       }
     );
-    // // Event assertions can verify that the arguments are the expected ones
-    // expectEvent(txn, 'Lent', {
-    //   from: userA
-    // });
+    // Event assertions can verify that the arguments are the expected ones
+    expectEvent(txn, 'Lent', {
+      nftAddress: NFTInstance.address,
+      tokenId: new BN(tokenId),
+      lentAmount: new BN(1),
+      lenderAddress: userA,
+      maxRentDuration: new BN(maxRentDuration),
+      dailyRentPrice: dailyRentPrice,
+      nftPrice: nftPrice,
+      paymentToken: paymentToken
+    });
   };
 
   beforeEach(async () => {
@@ -146,35 +144,8 @@ contract("ReNFT", function (accounts) {
   });
 
   it("Lending - Renting", async () => {
-    await lendBatch({
-      tokenIds: [lastestNFT]
+    await lend({
+      tokenId: lastestNFT
     });
-
-    // expect(balancesPre[1]).to.be.equal(0);
-
-    // const rentAmounts = BigNumber.from(rentDurations[0]).mul(
-    //   await Utils.unpackPrice(DAILY_RENT_PRICE, DP18)
-    // );
-    // const pmtAmount = (await Utils.unpackPrice(NFT_PRICE, DP18)).add(
-    //   rentAmounts
-    // );
-
-    // const tx = await ReNFT.rent([E721.address], [1], [1], rentDurations);
-
-    // const balancesPost = await captureBalances([renter, ReNFT], [WETH]);
-    // expect(balancesPost[1]).to.be.equal(pmtAmount);
-    // expect(balancesPost[0]).to.be.equal(balancesPre[0].sub(pmtAmount));
-
-    // const receipt = await tx.wait();
-
-    // const rentedAt = [(await getLatestBlock()).timestamp];
-    // const events = receipt.events ?? [];
-    // validateRented({
-    //   lendingId: [1],
-    //   renterAddress: [renter.address],
-    //   rentDuration: [2],
-    //   rentedAt,
-    //   events,
-    // });
   });
-})
+});

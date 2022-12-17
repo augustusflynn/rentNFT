@@ -2,18 +2,10 @@
 pragma solidity ^0.8.11;
 
 interface IResolver {
-    enum PaymentToken {
-        MyToken
-        // SENTINEL,
-        // WETH,
-        // DAI,
-        // USDC,
-        // USDT,
-        // TUSD,
-        // RENT
-    }
+    function getPaymentToken(string memory _name)
+        external
+        view
+        returns (address);
 
-    function getPaymentToken(uint8 _pt) external view returns (address);
-
-    function setPaymentToken(uint8 _pt, address _v) external;
+    function setPaymentToken(string memory _name, address _v) external;
 }
