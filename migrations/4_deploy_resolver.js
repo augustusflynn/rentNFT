@@ -12,13 +12,16 @@ module.exports = async function (deployer, _, accounts) {
   const ResolverInstance = await Resolver.deployed();
   console.log(`Resolver deployed at ${ResolverInstance.address}`);
   const TokenInstance = await Token.deployed();
+  const symbol = await TokenInstance.symbol.call();
+  const address = TokenInstance.address;
   // set Token address for Resolver
   await ResolverInstance.setPaymentToken(
-    await TokenInstance.symbol.call(),
-    TokenInstance.address,
+    symbol,
+    address,
     {
       from: accounts[9]
     }
   );
-  console.log(`Resolver done!!`);
+  const resolverToken = await ResolverInstance.getPaymentToken(symbol)
+  console.log(`Resolver: ${resolverToken} - done!!`);
 };

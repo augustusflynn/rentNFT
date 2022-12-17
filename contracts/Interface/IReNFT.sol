@@ -61,33 +61,33 @@ interface IReNft is IERC721Receiver, IERC1155Receiver {
         uint8 _rentDuration
     ) external;
 
-    // /**
-    //  * @dev renters call this to return the rented NFT before the
-    //  * deadline. If they fail to do so, they will lose the posted
-    //  * collateral
-    //  */
-    // function returnIt(
-    //     address[] memory _nft,
-    //     uint256[] memory _tokenId,
-    //     uint256[] memory _lendingIds
-    // ) external;
+    /**
+     * @dev claim collateral on rentals that are past their due date
+     */
+    function claimCollateral(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId
+    ) external;
 
-    // /**
-    //  * @dev claim collateral on rentals that are past their due date
-    //  */
-    // function claimCollateral(
-    //     address[] memory _nfts,
-    //     uint256[] memory _tokenIds,
-    //     uint256[] memory _lendingIds
-    // ) external;
+    /**
+     * @dev renters call this to return the rented NFT before the
+     * deadline. If they fail to do so, they will lose the posted
+     * collateral
+     */
+    function returnIt(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId
+    ) external;
 
-    // /**
-    //  * @dev stop lending releases the NFT from escrow and sends it back
-    //  * to the lender
-    //  */
-    // function stopLending(
-    //     address[] memory _nft,
-    //     uint256[] memory _tokenId,
-    //     uint256[] memory _lendingIds
-    // ) external;
+    /**
+     * @dev stop lending releases the NFT from escrow and sends it back
+     * to the lender
+     */
+    function stopLending(
+        address _nft,
+        uint256 _tokenId,
+        uint256 _lendingId
+    ) external;
 }

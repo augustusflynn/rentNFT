@@ -5,7 +5,7 @@ module.exports = async function (deployer, _, accounts) {
   const ResolverInstance = await Resolver.deployed();
   await deployer.deploy(
     ReNFT,
-    await ResolverInstance.address,
+    ResolverInstance.address,
     accounts[9], accounts[9],
     {
       from: accounts[9]

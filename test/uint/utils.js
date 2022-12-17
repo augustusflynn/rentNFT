@@ -1,3 +1,5 @@
+const { BN } = require("@openzeppelin/test-helpers");
+
 const PRICE_BITSIZE = 32;
 
 const decimalToPaddedHexString = (number, bitsize) => {
@@ -43,13 +45,9 @@ const packPrice = (price) => {
   return res;
 }
 const takeFee = (rent, rentFee) =>
-  rent.mul(rentFee).div(10_000)
+  rent.mul(rentFee).div(new BN(10000))
 
-const getEvents = (events, name) => {
-  return events.filter((e) => e?.event?.toLowerCase() === name.toLowerCase());
-}
 module.exports = {
   takeFee,
-  packPrice,
-  getEvents
+  packPrice
 }
